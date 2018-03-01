@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 msg_headers=("MONITOR" "UPDATE" "ERROR")
 retry_count=0
