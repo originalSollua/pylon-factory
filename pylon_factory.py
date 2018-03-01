@@ -76,7 +76,6 @@ if __name__ == "__main__":
                 t = t+1
             if t >= 10:
                 slack_client.server.ping()
-                print ("attempt to ping")
                 t = 0
 
                 
