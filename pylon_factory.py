@@ -5,13 +5,16 @@ from slackclient import SlackClient
 
 #activate a slackbot instance
 print("first point")
-slack_client = SlackClient('xoxb-321239186965-A8KU5rm2HQ7B6T2sSTnsn6Xb')
+bot_token = None
+with open('.env','r') as env_file:
+    bot_token = env_file.readline().rstrip().split("=")[1]
+slack_client = SlackClient(bot_token)
 print("after gettoken")
 #slackbot userid
 botid = None
 
-#constants 
-RTM_READ_DELAY = 1 
+#constants
+RTM_READ_DELAY = 1
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 
 def parse_bot_commands(slack_events):
