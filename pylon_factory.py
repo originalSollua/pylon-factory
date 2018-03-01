@@ -1,7 +1,10 @@
 import os
 import time
 import re
+import errno
+from socket import error as socket_error
 from slackclient import SlackClient
+import websocket
 
 #activate a slackbot instance
 print("first point")
@@ -16,6 +19,10 @@ botid = None
 #constants
 RTM_READ_DELAY = 1
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
+
+def connect():
+    print("attempting connect")
+    slack_client = SlackClient('xoxb-321239186965-A8KU5rm2HQ7B6T2sSTnsn6Xb')
 
 def parse_bot_commands(slack_events):
     for event in slack_events:
@@ -43,6 +50,7 @@ def handle_command(command, channel):
 
 if __name__ == "__main__":
     print("in the main probabpl")
+    t = 0
     if slack_client.rtm_connect(with_team_state=False):
         print("Pylon factory is up and running")
         botid = slack_client.api_call("auth.test")["user_id"]
@@ -52,9 +60,26 @@ if __name__ == "__main__":
                 text="I'm back"
         )
         while True:
-            command, channel = parse_bot_commands(slack_client.rtm_read())
+            try:
+                command, channel = parse_bot_commands(slack_client.rtm_read())
+            except socket_error as serr:
+                print ("socket error")
+                connect()
+            except websocket.WebSocketConnectionClosedException:
+                print ("network failure")
+                connect()
+
             if command:
                 handle_command(command, channel)
+                t = 0
+            else:
+                t = t+1
+            if t >= 10:
+                slack_client.server.ping()
+                print ("attempt to ping")
+                t = 0
+
+                
             time.sleep(RTM_READ_DELAY)
     else:
         print("Connection Failed, see traceback")
