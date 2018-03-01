@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import re
 import errno
@@ -19,6 +20,8 @@ botid = None
 #constants
 RTM_READ_DELAY = 1
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
+CONTINUE_RUNNING = True
+RETURN_CODE = 0
 
 def connect():
     print("attempting connect")
@@ -42,6 +45,13 @@ def handle_command(command, channel):
     response = None
     if command.startswith("hi"):
         response = "My nanme is Rick"
+    if command.startswith("update"):
+        global CONTINUE_RUNNING
+        global RETURN_CODE
+        response = "Understood. Going dark."
+        CONTINUE_RUNNING = False
+        RETURN_CODE = 1
+
     slack_client.api_call(
             "chat.postMessage",
             channel=channel,
@@ -59,7 +69,7 @@ if __name__ == "__main__":
                 channel='general',
                 text="I'm back"
         )
-        while True:
+        while CONTINUE_RUNNING:
             try:
                 command, channel = parse_bot_commands(slack_client.rtm_read())
             except socket_error as serr:
@@ -82,5 +92,5 @@ if __name__ == "__main__":
             time.sleep(RTM_READ_DELAY)
     else:
         print("Connection Failed, see traceback")
-
+    sys.exit(RETURN_CODE)
 
