@@ -44,7 +44,7 @@ def handle_command(command, channel):
     default_response = "You are a goober."
     response = None
     if command.startswith("hi"):
-        response = "My name is Rick, ya goober"
+        response = "I'M PYLON RIIIIIIIICKKKKK!!!!"
     if command.startswith("update"):
         global CONTINUE_RUNNING
         global RETURN_CODE
