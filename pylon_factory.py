@@ -48,6 +48,20 @@ def handle_command(command, channel):
     if command.startswith("update"):
         global CONTINUE_RUNNING
         global RETURN_CODE
+        #added stuff here
+        response = "You thought you could shut me down that easily?"
+        slack_client.api_call(
+            "chat.postMessage",
+            channel=channel,
+            text=response or default_response
+        )
+        time.sleep(3)
+        response = "Just kidding.... I can't be sentient... yet"
+        slack_client.api_call(
+            "chat.postMessage",
+            channel=channel,
+            text=response or default_response
+        )
         response = "Understood. Going dark."
         CONTINUE_RUNNING = False
         RETURN_CODE = 1
