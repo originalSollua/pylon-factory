@@ -36,7 +36,7 @@ def roll(message_text):
     if roll_com[0] != "roll":
         return "I dont even know what happened"
     roll_nums  = roll_com[1].split("d")
-    
+
     if (int(roll_nums[0]) >= 1 and int(roll_nums[0]) <= 99):
         num_dice = int(roll_nums[0])
     if (int(roll_nums[1]) >= 1 and int(roll_nums[1]) <= 99):
@@ -115,9 +115,9 @@ def handle_command(command, channel):
         )
         response = "Understood. Going dark."
         CONTINUE_RUNNING = False
-        RETURN_CODE = 1
+        RETURN_CODE = 2
 
-    else: 
+    else:
         slack_client.api_call(
             "chat.postMessage",
             channel=channel,
