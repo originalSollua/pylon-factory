@@ -70,14 +70,14 @@ def parse_dm(message_text):
     print(message_text)
     global CON_T
     CON_T = CON_T+1
-    if CON_T >= 10:
+    if CON_T >= 1:
         chime_in();
 
     matches = re.search(MENTION_REGEX, message_text)
     return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
 def chime_in():
-    send_message(getFact.get(), "general");
+    send_message(genFact.get(), "general");
 
 
 def send_message(message, channel):
