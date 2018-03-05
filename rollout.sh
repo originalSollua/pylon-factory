@@ -48,7 +48,7 @@ while sleep 1; do
         exit 0
 
       # RC=1 , Uncaught python error, likely bad build
-      if [ $pylon_exit -eq 1 ]; then
+      elif [ $pylon_exit -eq 1 ]; then
         post_msg ${msg_headers[2]} "pylon_factory.py failed with RC=$pylon_exit"
         post_msg ${msg_headers[1]} "Likely bad build, backing up to previous commit"
         git revert --no-commit HEAD~1..HEAD
@@ -66,7 +66,6 @@ while sleep 1; do
           post_msg ${msg_headers[2]} "Unable to revert or commit change, hep"
           exit 1
         fi
-      fi
 
       # RC=2 , clean exit and update
       elif [ $pylon_exit -eq 2 ]; then
@@ -84,7 +83,7 @@ while sleep 1; do
 
       # RC=? , unknown return code from bot, attempt to restart
       else
-        post_msg ${msg_headers[2]} "Unrecognized return code, attempting restart"
+        post_msg ${msg_headers[2]} "Unrecognized RC=$pylon_exit, attempting restart"
         bot_status=""
       fi
     fi
