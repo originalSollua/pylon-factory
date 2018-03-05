@@ -12,7 +12,6 @@ print("first point")
 bot_token = None
 with open('.env','r') as env_file:
     bot_token = env_file.readline().rstrip().split("=")[1]
-slack_client = SlackClient(bot_token)
 print("after gettoken")
 #slackbot userid
 botid = None
@@ -25,7 +24,7 @@ RETURN_CODE = 0
 
 def connect():
     print("attempting connect")
-    slack_client = SlackClient('xoxb-321239186965-A8KU5rm2HQ7B6T2sSTnsn6Xb')
+    slack_client = SlackClient(bot_token)
 
 def parse_bot_commands(slack_events):
     for event in slack_events:
@@ -102,7 +101,7 @@ if __name__ == "__main__":
                 slack_client.server.ping()
                 t = 0
 
-                
+
             time.sleep(RTM_READ_DELAY)
     else:
         print("Connection Failed, see traceback")
