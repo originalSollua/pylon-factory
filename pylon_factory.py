@@ -3,9 +3,11 @@ import sys
 import time
 import re
 import errno
+import random
 from socket import error as socket_error
 from slackclient import SlackClient
 import websocket
+
 
 #activate a slackbot instance
 print("first point")
@@ -22,6 +24,32 @@ RTM_READ_DELAY = 1
 MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 CONTINUE_RUNNING = True
 RETURN_CODE = 0
+
+def roll(message_text):
+    #stub
+    num_dice = 0
+    dice_size = 0
+    dice_array = []
+    print(message_text)
+    roll_com = message_text.split(" ")
+    print(roll_com)
+    if roll_com[0] != "roll":
+        return "I dont even know what happened"
+    roll_nums  = roll_com[1].split("d")
+    
+    if (int(roll_nums[0]) >= 1 and int(roll_nums[0]) <= 99):
+        num_dice = int(roll_nums[0])
+    if (int(roll_nums[1]) >= 1 and int(roll_nums[1]) <= 99):
+        dice_size = int(roll_nums[1])
+    if (num_dice == 0 or dice_size == 0):
+        return "Invaild roll parameters. Please use (1-99)d(1-99)"
+    for x in range(num_dice):
+        dice_array.append(random.randint(1,dice_size))
+    output = ""
+    for x in range(len(dice_array)-2):
+        output += str(x) +", "
+    output += str(dice_array[len(dice_array)-1])
+    return "You rolled: "+output
 
 def connect():
     print("attempting connect")
@@ -46,6 +74,15 @@ def handle_command(command, channel):
     response = None
     if command.startswith("hi"):
         response = "I'M PYLON RIIIIIIIICKKKKK!!!!"
+
+    if command.startswith("roll"):
+        response = roll(command)
+        slack_client.api_call(
+                "chat.postMessage",
+                channel=channel,
+                text=response or default_response
+                )
+
     if command.startswith("update"):
         global CONTINUE_RUNNING
         global RETURN_CODE
@@ -67,7 +104,8 @@ def handle_command(command, channel):
         CONTINUE_RUNNING = False
         RETURN_CODE = 1
 
-    slack_client.api_call(
+    else: 
+        slack_client.api_call(
             "chat.postMessage",
             channel=channel,
             text=response or default_response
@@ -77,6 +115,7 @@ if __name__ == "__main__":
     print("in the main probably")
     t = 0
     connect()
+
     if slack_client.rtm_connect(with_team_state=False):
         print("Pylon factory is up and running")
         botid = slack_client.api_call("auth.test")["user_id"]
