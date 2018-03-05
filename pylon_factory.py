@@ -51,6 +51,10 @@ def roll(message_text):
     output += str(dice_array[len(dice_array)-1])
     return "You rolled: "+output
 
+def get_random_fact():
+    fact = "Did you know that: the Sun is a deadly laser"
+    return fact
+
 def connect():
     print("attempting connect")
     global slack_client
@@ -68,6 +72,15 @@ def parse_bot_commands(slack_events):
 def parse_dm(message_text):
     matches = re.search(MENTION_REGEX, message_text)
     return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
+
+def send_message(message, channel):
+    default = ""
+    slack_client.api_call(
+            "chat.postMessage",
+            channel=channel,
+            text = default or message
+            )
+    return
 
 def handle_command(command, channel):
     default_response = "You are a goober."
@@ -114,6 +127,7 @@ def handle_command(command, channel):
 if __name__ == "__main__":
     print("in the main probably")
     t = 0
+    r = 0
     connect()
 
     if slack_client.rtm_connect(with_team_state=False):
@@ -139,13 +153,17 @@ if __name__ == "__main__":
                 t = 0
             else:
                 t = t+1
+                r = r+1
             if t >= 10:
                 slack_client.server.ping()
                 t = 0
-
+            if r >= 100:
+                chance = roll("roll 1d99")
+                r = 0
+                if (chance == "You rolled: 99"):
+                    send_message(get_random_fact(), channel)
 
             time.sleep(RTM_READ_DELAY)
     else:
         print("Connection Failed, see traceback")
     sys.exit(RETURN_CODE)
-
