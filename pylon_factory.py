@@ -7,7 +7,7 @@ import random
 from socket import error as socket_error
 from slackclient import SlackClient
 import websocket
-
+import genFact
 
 #activate a slackbot instance
 print("first point")
@@ -51,10 +51,6 @@ def roll(message_text):
     output += str(dice_array[len(dice_array)-1])
     return "You rolled: "+output
 
-def get_random_fact():
-    fact = "Did you know that: the Sun is a deadly laser"
-    return fact
-
 def connect():
     print("attempting connect")
     global slack_client
@@ -70,6 +66,7 @@ def parse_bot_commands(slack_events):
     return None, None
 
 def parse_dm(message_text):
+    print(message_text)
     matches = re.search(MENTION_REGEX, message_text)
     return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
@@ -161,7 +158,7 @@ if __name__ == "__main__":
                 chance = roll("roll 1d99")
                 r = 0
                 if (chance == "You rolled: 99"):
-                    send_message(get_random_fact(), channel)
+                    send_message(genFact.get(), channel)
 
             time.sleep(RTM_READ_DELAY)
     else:
