@@ -70,7 +70,7 @@ def parse_dm(message_text):
     print(message_text)
     global CON_T
     CON_T = CON_T+1
-    if CON_T >= 1:
+    if CON_T >= 10:
         chime_in();
 
     matches = re.search(MENTION_REGEX, message_text)
