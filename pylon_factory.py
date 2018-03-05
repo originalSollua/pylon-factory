@@ -7,8 +7,6 @@ from socket import error as socket_error
 from slackclient import SlackClient
 import websocket
 
-BREAK THE BUILD
-
 #activate a slackbot instance
 print("first point")
 bot_token = None
@@ -104,7 +102,7 @@ if __name__ == "__main__":
                 slack_client.server.ping()
                 t = 0
 
-
+                
             time.sleep(RTM_READ_DELAY)
     else:
         print("Connection Failed, see traceback")
