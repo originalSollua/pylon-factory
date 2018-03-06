@@ -13,7 +13,11 @@ def partA():
             'Not everyone knows this, but',
             'Einstine once said',
             'Bill Nye says that',
-            'I saw on the news that'
+            'I saw on the news that',
+            'I just found out that',
+            'I just checked my magic 8 ball and saw that',
+            'Grumbo did the mole dance and he says',
+            'I'll have you know that'
             ]
     return random.choice(partAL)
 
@@ -31,6 +35,10 @@ def partB():
             'old tires are',
             'the code for this bot can be',
             '3D printers are',
+            'the tree gators are',
+            'the Glorious Haskell Compiler is',
+            'kids these days are',
+            'Chris Perkins is',
             'the Sun is'
             ]
     return random.choice(partBL)
@@ -44,11 +52,16 @@ def partC():
             'a way to drink coffee faster',
             'a lie',
             'de wey',
+            'restless',
             'a replacement for Bender',
             'confirmed by Mythbusters',
             'one of the Mario Bros',
             'the next game getting ported to the Switch',
             'a deadly laser',
+            'starting to gain traction',
+            'addicted to smartphones',
+            'could afford a house by now if it weren't for all that avacado toast',
+            'a kind and merciful DM',
             'a show you did not know was on Netflix'
             ]
 

@@ -52,6 +52,10 @@ def roll(message_text):
     else:
         return "Invalid roll parameters. Please use (1-99)d(1-99)"
 
+def iWannaKnow():
+    tfact = genFact.get()
+    LOG_STREAM.append(tfact)
+    return tfact
 
 def connect():
     LOG_STREAM.append("attempting connect")
@@ -114,6 +118,10 @@ def handle_command(command, channel):
     elif command.startswith("roll"):
         response = roll(command)
         send_message(response, channel)
+
+    elif command.startswith("factoid"):
+            response = iWannaKnow()
+            send_message(response, channle);
 
     elif command.startswith("update"):
         global CONTINUE_RUNNING
