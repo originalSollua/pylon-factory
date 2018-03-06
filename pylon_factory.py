@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import datetime
 import re
 import errno
 import random
@@ -21,7 +22,7 @@ RETURN_CODE = 0
 CON_T = 0
 DIE_RANGE = range(1,100)
 DEFAULT_RESPONSE = "You are a goober."
-LOG_FN = ".log.txt"
+LOG_FN = "log.txt"
 LOG_STREAM =[]
 
 def roll(message_text):
@@ -30,7 +31,6 @@ def roll(message_text):
     dice_array = []
     LOG_STREAM.append(message_text)
     roll_com = message_text.split(" ")
-    LOG_STREAM.append(roll_com)
     if roll_com[0] != "roll":
         return "I dont even know what happened"
     roll_nums  = roll_com[1].split("d")
@@ -64,8 +64,13 @@ def connect():
 def writeLog():
     with open(LOG_FN,'a') as logfile:
         for x in LOG_STREAM:
-            logfile.write(x)
+            try:
+                logfile.write(str(datetime.datetime.now()) +": "+x)
+            except TypeError:
+                logfile.write(str(datetime.datetime.now()) +": LOG ERR")
+            logfile.write("\n")
     logfile.close()
+    del LOG_STREAM[:]
 
 
 
@@ -127,7 +132,7 @@ def handle_command(command, channel):
         send_message(response or DEFAULT_RESPONSE, channel)
 
 if __name__ == "__main__":
-    print("in the main probably")
+    LOG_STREAM.append("in the main probably")
     t = 0
     r = 0
     connect()
