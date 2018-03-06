@@ -96,11 +96,11 @@ def handle_command(command, channel):
     if command.startswith("hi"):
         response = "I'M PYLON RIIIIIIIICKKKKK!!!!"
 
-    if command.startswith("roll"):
+    elif command.startswith("roll"):
         response = roll(command)
         send_message(response, channel)
 
-    if command.startswith("update"):
+    elif command.startswith("update"):
         global CONTINUE_RUNNING
         global RETURN_CODE
         #added stuff here
