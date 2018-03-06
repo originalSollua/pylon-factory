@@ -10,12 +10,6 @@ import websocket
 import genFact
 
 #activate a slackbot instance
-print("first point")
-global bot_token
-with open('.env','r') as env_file:
-    bot_token = env_file.readline().rstrip().split("=")[1]
-print("token=" + bot_token)
-print("after gettoken")
 #slackbot userid
 botid = None
 
@@ -59,6 +53,8 @@ def roll(message_text):
 
 def connect():
     print("attempting connect")
+    with open('.env','r') as env_file:
+        bot_token = env_file.readline().rstrip().split("=")[1]
     print bot_token
     global slack_client
     slack_client = SlackClient(bot_token)
@@ -78,6 +74,7 @@ def parse_dm(message_text):
     CON_T = CON_T+1
     if CON_T >= 10:
         chime_in();
+        CON_T = 0
 
     matches = re.search(MENTION_REGEX, message_text)
     return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
