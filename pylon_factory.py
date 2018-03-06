@@ -25,9 +25,10 @@ MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 CONTINUE_RUNNING = True
 RETURN_CODE = 0
 CON_T = 0
+DIE_RANGE = range(1,100)
+DEFAULT_RESPONSE = "You are a goober."
 
 def roll(message_text):
-    #stub
     num_dice = 0
     dice_size = 0
     dice_array = []
@@ -38,19 +39,23 @@ def roll(message_text):
         return "I dont even know what happened"
     roll_nums  = roll_com[1].split("d")
 
-    if (int(roll_nums[0]) >= 1 and int(roll_nums[0]) <= 99):
-        num_dice = int(roll_nums[0])
-    if (int(roll_nums[1]) >= 1 and int(roll_nums[1]) <= 99):
+    # Check if the values are integers
+    try:
+        num_dice  = int(roll_nums[0])
         dice_size = int(roll_nums[1])
-    if (num_dice == 0 or dice_size == 0):
-        return "Invaild roll parameters. Please use (1-99)d(1-99)"
-    for x in range(num_dice):
-        dice_array.append(random.randint(1,dice_size))
-    output = ""
-    for x in range(len(dice_array)-2):
-        output += str(x) +", "
-    output += str(dice_array[len(dice_array)-1])
-    return "You rolled: "+output
+    except TypeError:
+        return "Invalid roll parameters. Please use (1-99)d(1-99)"
+
+    # Check if in range, then generate values
+    if (num_dice in DIE_RANGE and dice_size in DIE_RANGE):
+        for x in range(num_dice):
+            dice_array.append(random.randint(1,dice_size))
+        output = "You rolled: " + ", ".join(map(str,dice_array))
+        output += "\nYour total: " + str(sum(dice_array))
+        return output
+    else:
+        return "Invalid roll parameters. Please use (1-99)d(1-99)"
+
 
 def connect():
     print("attempting connect")
@@ -82,55 +87,37 @@ def chime_in():
 
 
 def send_message(message, channel):
-    default = ""
     slack_client.api_call(
             "chat.postMessage",
             channel=channel,
-            text = default or message
+            text = message or DEFAULT_RESPONSE
             )
     return
 
 def handle_command(command, channel):
-    default_response = "You are a goober."
     response = None
     if command.startswith("hi"):
         response = "I'M PYLON RIIIIIIIICKKKKK!!!!"
 
     if command.startswith("roll"):
         response = roll(command)
-        slack_client.api_call(
-                "chat.postMessage",
-                channel=channel,
-                text=response or default_response
-                )
+        send_message(response, channel)
 
     if command.startswith("update"):
         global CONTINUE_RUNNING
         global RETURN_CODE
         #added stuff here
         response = "You thought you could shut me down that easily?"
-        slack_client.api_call(
-            "chat.postMessage",
-            channel=channel,
-            text=response or default_response
-        )
+        send_message(response, channel)
         time.sleep(3)
         response = "Just kidding.... I can't be sentient... yet"
-        slack_client.api_call(
-            "chat.postMessage",
-            channel=channel,
-            text=response or default_response
-        )
+        send_message(response, channel)
         response = "Understood. Going dark."
         CONTINUE_RUNNING = False
         RETURN_CODE = 2
 
     else:
-        slack_client.api_call(
-            "chat.postMessage",
-            channel=channel,
-            text=response or default_response
-    )
+        send_message(response or DEFAULT_RESPONSE, channel)
 
 if __name__ == "__main__":
     print("in the main probably")
@@ -141,11 +128,7 @@ if __name__ == "__main__":
     if slack_client.rtm_connect(with_team_state=False):
         print("Pylon factory is up and running")
         botid = slack_client.api_call("auth.test")["user_id"]
-        slack_client.api_call(
-                "chat.postMessage",
-                channel='general',
-                text="I'm back"
-        )
+        send_message("I'm back", 'general')
         while CONTINUE_RUNNING:
             try:
                 command, channel = parse_bot_commands(slack_client.rtm_read())
