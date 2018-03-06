@@ -11,7 +11,7 @@ def partA():
             'This might surprise you, but',
             'Here is a hot tip:',
             'Not everyone knows this, but',
-            'Einstine once said',
+            'Einstin once said',
             'Bill Nye says that',
             'I saw on the news that',
             'I just found out that',
@@ -39,6 +39,7 @@ def partB():
             'the Glorious Haskell Compiler is',
             'kids these days are',
             'Chris Perkins is',
+            'the fox is',
             'the Sun is'
             ]
     return random.choice(partBL)
@@ -60,8 +61,9 @@ def partC():
             'a deadly laser',
             'starting to gain traction',
             'addicted to smartphones',
-            "could afford a house by now if it weren't for all that avacado toast",
+            "not able to afford a house by now if it weren't for all that avacado toast",
             'a kind and merciful DM',
+            'saying Ring-ding-ding-ding-dingeringeding',
             'a show you did not know was on Netflix'
             ]
 
