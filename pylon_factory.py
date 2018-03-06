@@ -132,6 +132,9 @@ def handle_command(command, channel):
         send_message(response or DEFAULT_RESPONSE, channel)
 
 if __name__ == "__main__":
+    with open(LOG_FN,'w') as logfile:
+        logfile.write("New Log start:")
+    logfile.close()
     LOG_STREAM.append("in the main probably")
     t = 0
     r = 0
