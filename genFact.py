@@ -30,7 +30,8 @@ def partB():
             'the cake is',
             'old tires are',
             'the code for this bot can be',
-            '3D printers are'
+            '3D printers are',
+            'the Sun is'
             ]
     return random.choice(partBL)
 
@@ -47,6 +48,7 @@ def partC():
             'confirmed by Mythbusters',
             'one of the Mario Bros',
             'the next game getting ported to the Switch',
+            'a deadly laser',
             'a show you did not know was on Netflix'
             ]
 

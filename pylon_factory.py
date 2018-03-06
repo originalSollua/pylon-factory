@@ -21,14 +21,16 @@ RETURN_CODE = 0
 CON_T = 0
 DIE_RANGE = range(1,100)
 DEFAULT_RESPONSE = "You are a goober."
+LOG_FN = ".log.txt"
+LOG_STREAM =[]
 
 def roll(message_text):
     num_dice = 0
     dice_size = 0
     dice_array = []
-    print(message_text)
+    LOG_STREAM.append(message_text)
     roll_com = message_text.split(" ")
-    print(roll_com)
+    LOG_STREAM.append(roll_com)
     if roll_com[0] != "roll":
         return "I dont even know what happened"
     roll_nums  = roll_com[1].split("d")
@@ -52,24 +54,32 @@ def roll(message_text):
 
 
 def connect():
-    print("attempting connect")
+    LOG_STREAM.append("attempting connect")
     with open('.env','r') as env_file:
         bot_token = env_file.readline().rstrip().split("=")[1]
-    print bot_token
+    LOG_STREAM.append(bot_token)
     global slack_client
     slack_client = SlackClient(bot_token)
+
+def writeLog():
+    with open(LOG_FN,'a') as logfile:
+        for x in LOG_STREAM:
+            logfile.write(x)
+    logfile.close()
+
+
 
 def parse_bot_commands(slack_events):
     for event in slack_events:
         if event["type"] == "message" and not "subtype" in event:
             user_id, message = parse_dm(event["text"])
             if user_id == botid:
-                print(message)
+                LOG_STREAM.append(message)
                 return message, event["channel"]
     return None, None
 
 def parse_dm(message_text):
-    print(message_text)
+    LOG_STREAM.append(message_text)
     global CON_T
     CON_T = CON_T+1
     if CON_T >= 10:
@@ -123,17 +133,17 @@ if __name__ == "__main__":
     connect()
 
     if slack_client.rtm_connect(with_team_state=False):
-        print("Pylon factory is up and running")
+        LOG_STREAM.append("Pylon factory is up and running")
         botid = slack_client.api_call("auth.test")["user_id"]
         send_message("I'm back", 'general')
         while CONTINUE_RUNNING:
             try:
                 command, channel = parse_bot_commands(slack_client.rtm_read())
             except socket_error as serr:
-                print ("socket error")
+                LOG_STREAM.append("socket error")
                 connect()
             except websocket.WebSocketConnectionClosedException:
-                print ("network failure")
+                LOG_STREAM.append("network failure")
                 connect()
 
             if command:
@@ -152,6 +162,7 @@ if __name__ == "__main__":
                     send_message(genFact.get(), channel)
 
             time.sleep(RTM_READ_DELAY)
+            writeLog()
     else:
-        print("Connection Failed, see traceback")
+        LOG_STREAM.append("Connection Failed, see traceback")
     sys.exit(RETURN_CODE)
