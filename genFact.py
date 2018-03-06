@@ -17,7 +17,7 @@ def partA():
             'I just found out that',
             'I just checked my magic 8 ball and saw that',
             'Grumbo did the mole dance and he says',
-            'I'll have you know that'
+            "I'll have you know that"
             ]
     return random.choice(partAL)
 
@@ -60,7 +60,7 @@ def partC():
             'a deadly laser',
             'starting to gain traction',
             'addicted to smartphones',
-            'could afford a house by now if it weren't for all that avacado toast',
+            "could afford a house by now if it weren't for all that avacado toast",
             'a kind and merciful DM',
             'a show you did not know was on Netflix'
             ]

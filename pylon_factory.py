@@ -121,7 +121,7 @@ def handle_command(command, channel):
 
     elif command.startswith("factoid"):
             response = iWannaKnow()
-            send_message(response, channle);
+            send_message(response, channel);
 
     elif command.startswith("update"):
         global CONTINUE_RUNNING
