@@ -54,6 +54,7 @@ def roll(message_text):
 
 def connect():
     print("attempting connect")
+    print bot_token
     global slack_client
     slack_client = SlackClient(bot_token)
 
