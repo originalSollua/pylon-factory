@@ -9,6 +9,7 @@ from socket import error as socket_error
 from slackclient import SlackClient
 import websocket
 import genFact
+import pylonGPIO
 
 #activate a slackbot instance
 #slackbot userid
@@ -24,6 +25,7 @@ DIE_RANGE = range(1,100)
 DEFAULT_RESPONSE = "You are a goober."
 LOG_FN = "log.txt"
 LOG_STREAM =[]
+pylonGPIO.initPylonIO()
 
 def roll(message_text):
     num_dice = 0
@@ -62,7 +64,7 @@ def connect():
     with open('.env','r') as env_file:
         bot_token = env_file.readline().rstrip().split("=")[1]
     LOG_STREAM.append(bot_token)
-    global slack_client
+    #global slack_client
     slack_client = SlackClient(bot_token)
 
 def writeLog():
@@ -171,6 +173,18 @@ if __name__ == "__main__":
             if t >= 10:
                 slack_client.server.ping()
                 t = 0
+                temp = pylonGPIO.readCoreTemp()
+                if int(temp) >= 40000:
+                    send_message('*WARNING THERMAL OVERLOAD IN PROGRESS!*')
+                    send_message('*CORE TEMPERATURE IS: '+temp+'*')
+                    if not pylonGPIO.fanOn:
+                        pylon.GPIO.activateFan()
+                elif int(temp) < 40000 and pylonGPIO.fanON:
+                    send_message('Therman crisis averted.')
+                    pylon.GPIO.deactivateFan()
+                else:
+                    print 'nothing to report'
+
             if r >= 100:
                 chance = roll("roll 1d99")
                 r = 0
