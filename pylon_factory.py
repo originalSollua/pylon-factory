@@ -64,7 +64,7 @@ def connect():
     with open('.env','r') as env_file:
         bot_token = env_file.readline().rstrip().split("=")[1]
     LOG_STREAM.append(bot_token)
-    #global slack_client
+    global slack_client
     slack_client = SlackClient(bot_token)
 
 def writeLog():
