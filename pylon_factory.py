@@ -178,10 +178,10 @@ if __name__ == "__main__":
                     send_message('*WARNING THERMAL OVERLOAD IN PROGRESS!*', 'general')
                     send_message('*CORE TEMPERATURE IS: '+temp+'*', 'general')
                     if not pylonGPIO.fanOn:
-                        pylon.GPIO.activateFan()
+                        pylonGPIO.activateFan()
                 elif int(temp) < 40000 and pylonGPIO.fanON:
                     send_message('Therman crisis averted.', 'general')
-                    pylon.GPIO.deactivateFan()
+                    pylonGPIO.deactivateFan()
                 else:
                     print 'nothing to report'
 
