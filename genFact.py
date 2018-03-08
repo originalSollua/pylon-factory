@@ -16,6 +16,7 @@ def partA():
             'I saw on the news that',
             'I just found out that',
             'I just checked my magic 8 ball and saw that',
+            'I asked Bender for his advice, he says',
             'Grumbo did the mole dance and he says',
             "I'll have you know that"
             ]
@@ -40,6 +41,7 @@ def partB():
             'kids these days are',
             'Chris Perkins is',
             'the fox is',
+            'Shia LaBeouf is',
             'the Sun is'
             ]
     return random.choice(partBL)
@@ -64,6 +66,7 @@ def partC():
             "not able to afford a house because of all that avacado toast",
             'a kind and merciful DM',
             'saying Ring-ding-ding-ding-dingeringeding',
+            'about to do an incompatible merge',
             'a show you did not know was on Netflix'
             ]
 
