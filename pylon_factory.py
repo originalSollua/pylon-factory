@@ -181,7 +181,7 @@ if __name__ == "__main__":
                 LOG_STREAM.append("network failure")
                 connect()
             except AttributeError:
-                LOG_STREAM.append("Attempted to read from a null connection")
+                # LOG_STREAM.append("Attempted to read from a null connection")
                 connect()
 
             if command:
