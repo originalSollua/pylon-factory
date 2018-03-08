@@ -13,6 +13,7 @@ on_pi = False
 try:
     import pylonGPIO
     on_pi = True
+    print("On the Pi")
 except ImportError:
     on_pi = False
 
@@ -164,7 +165,6 @@ if __name__ == "__main__":
     LOG_STREAM.append("in the main probably")
     t = 0
     r = 0
-    global on_pi
     connect()
 
     if slack_client.rtm_connect(with_team_state=False):
