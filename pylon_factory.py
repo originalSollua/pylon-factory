@@ -179,7 +179,7 @@ if __name__ == "__main__":
                     send_message('*CORE TEMPERATURE IS: '+temp+'*', 'general')
                     if not pylonGPIO.fanOn:
                         pylonGPIO.activateFan()
-                elif int(temp) < 40000 and pylonGPIO.fanON:
+                elif int(temp) < 45000 and pylonGPIO.fanON:
                     send_message('Therman crisis averted.', 'general')
                     pylonGPIO.deactivateFan()
                 else:

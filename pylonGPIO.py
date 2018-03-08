@@ -16,13 +16,11 @@ def initPylonIO():
 
 def readCoreTemp():
     result = subprocess.check_output(['cat','/sys/class/thermal/thermal_zone0/temp'])
-    print result
     return result
 
 def activateFan():
     global pinFan
     global fanOn
-    print "IT'S GETTING TOO HOT"
     gpio.output(pinFan, gpio.HIGH)
     fanOn = True
 
