@@ -191,17 +191,17 @@ if __name__ == "__main__":
                 t = t+1
                 r = r+1
             if t >= 10:
-                try:
-                    slack_client.server.ping()
-                except slackclient.server.SlackConnectionError:
-                    LOG_STREAM.append("Why would ping fail?")
-                    connect()
+                #try:
+                #    slack_client.server.ping()
+                #except slackclient.server.SlackConnectionError:
+                #    LOG_STREAM.append("Why would ping fail?")
+                #    connect()
                 t = 0
                 if on_pi:
                     temp = pylonGPIO.readCoreTemp()
                     if int(temp) >= 48000:
                         send_message('*WARNING THERMAL OVERLOAD IN PROGRESS!*', 'general')
-                        send_message('CORE TEMPERATURE IS: '+temp, 'general')
+                #        send_message('CORE TEMPERATURE IS: '+temp, 'general')
                         if not pylonGPIO.fanOn:
                             pylonGPIO.activateFan()
                     elif int(temp) < 45000 and pylonGPIO.fanOn:
