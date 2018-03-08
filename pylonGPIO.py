@@ -1,7 +1,7 @@
 import time
 import subprocess
 import RPi.GPIO as gpio
-from tsl2561 import TSL2561
+#from tsl2561 import TSL2561
 
 pinFan = 0
 fanOn = False
