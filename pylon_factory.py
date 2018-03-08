@@ -9,7 +9,13 @@ from socket import error as socket_error
 from slackclient import SlackClient
 import websocket
 import genFact
-import pylonGPIO
+
+global on_pi
+try:
+    import pylonGPIO
+    on_pi = True
+except ImportError:
+    on_pi = False
 
 #activate a slackbot instance
 #slackbot userid
@@ -25,7 +31,8 @@ DIE_RANGE = range(1,100)
 DEFAULT_RESPONSE = "You are a goober."
 LOG_FN = "log.txt"
 LOG_STREAM =[]
-pylonGPIO.initPylonIO()
+if on_pi:
+    pylonGPIO.initPylonIO()
 
 def roll(message_text):
     num_dice = 0
@@ -58,6 +65,9 @@ def iWannaKnow():
     tfact = genFact.get()
     LOG_STREAM.append(tfact)
     return tfact
+
+def whatLoveIs():
+    return
 
 def connect():
     LOG_STREAM.append("attempting connect")
@@ -173,17 +183,20 @@ if __name__ == "__main__":
             if t >= 10:
                 slack_client.server.ping()
                 t = 0
-                temp = pylonGPIO.readCoreTemp()
-                if int(temp) >= 48000:
-                    send_message('*WARNING THERMAL OVERLOAD IN PROGRESS!*', 'general')
-                    send_message('CORE TEMPERATURE IS: '+temp, 'general')
-                    if not pylonGPIO.fanOn:
-                        pylonGPIO.activateFan()
-                elif int(temp) < 45000 and pylonGPIO.fanOn:
-                    send_message('Thermal crisis averted.', 'general')
-                    pylonGPIO.deactivateFan()
+                if on_pi:
+                    temp = pylonGPIO.readCoreTemp()
+                    if int(temp) >= 48000:
+                        send_message('*WARNING THERMAL OVERLOAD IN PROGRESS!*', 'general')
+                        send_message('CORE TEMPERATURE IS: '+temp, 'general')
+                        if not pylonGPIO.fanOn:
+                            pylonGPIO.activateFan()
+                    elif int(temp) < 45000 and pylonGPIO.fanOn:
+                        send_message('Thermal crisis averted.', 'general')
+                        pylonGPIO.deactivateFan()
+                    else:
+                        LOG_STREAM.append('nothing to report')
                 else:
-                    LOG_STREAM.append('nothing to report')
+                    LOG_STREAM.append('Not running on pi: no temp data')
 
             if r >= 100:
                 chance = roll("roll 1d99")
