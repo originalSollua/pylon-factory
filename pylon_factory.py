@@ -12,9 +12,9 @@ import genFact
 on_pi = True
 try:
     import pylonGPIO
-except ImportError as inputError:
+except ImportError as importError:
     on_pi = False
-    print(inputError)
+    print(importError)
 
 #activate a slackbot instance
 #slackbot userid
@@ -148,6 +148,7 @@ def handle_command(command, channel):
         response = "Just kidding.... I can't be sentient... yet"
         send_message(response, channel)
         response = "Understood. Going dark."
+        send_message(response, channel)
         CONTINUE_RUNNING = False
         RETURN_CODE = 2
 
@@ -210,7 +211,7 @@ if __name__ == "__main__":
                     else:
                         LOG_STREAM.append('nothing to report')
                 else:
-                    LOG_STREAM.append('Not running on pi: no temp data')
+                    LOG_STREAM.append('GPIO library not imported: no temp data')
 
             if r >= 100:
                 chance = roll("roll 1d99")

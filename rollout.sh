@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Get python install location
+python=`which python3 2> /dev/null`
+if [ $? -ne 0 ]; then
+  python=`which python`
+fi
 msg_headers=("MONITOR" "UPDATE" "ERROR")
 return_code=0
 retry=0
@@ -14,7 +19,7 @@ function post_msg {
 # Bot startup function
 function start_bot {
   return_code=0
-  python3 pylon_factory.py "$bot_status" & return_code=$?;pylon_pid=$!
+  $python pylon_factory.py "$bot_status" & return_code=$?;pylon_pid=$!
   # RC!=0 , something bad happened with bash
   if [ $return_code -ne 0 ]; then
     if [ $retry -eq 1 ]; then
