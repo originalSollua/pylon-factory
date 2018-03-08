@@ -3,7 +3,7 @@
 msg_headers=("MONITOR" "UPDATE" "ERROR")
 return_code=0
 retry=0
-bot_status=""
+bot_status="`git log --name-status HEAD^..HEAD`"
 
 # Messaging function
 function post_msg {
@@ -47,25 +47,27 @@ while sleep 1; do
         post_msg ${msg_headers[0]} "Script terminating"
         exit 0
 
-      # RC=1 , Uncaught python error, likely bad build
+      # RC=1 , Uncaught python error, python doesn't give good return codes, so
+      # give up, don't even try again, just quit, end it
       elif [ $pylon_exit -eq 1 ]; then
         post_msg ${msg_headers[2]} "pylon_factory.py failed with RC=$pylon_exit"
-        post_msg ${msg_headers[1]} "Likely bad build, backing up to previous commit"
-        git revert --no-commit HEAD~1..HEAD
-        git commit -m "AUTO: Reverting to previous commit"; return_code=$?
-        if [ $return_code -eq 0 ]; then
-          git push; return_code=$?
-          if [ $return_code -eq 0 ]; then
-            post_msg ${msg_headers[1]} "Sucessfully reverted, restarting bot"
-            return_code=1
-          else
-            post_msg ${msg_headers[2]} "Unable to push reversion, hep"
-            exit 1
-          fi
-        else
-          post_msg ${msg_headers[2]} "Unable to revert or commit change, hep"
-          exit 1
-        fi
+        post_msg ${msg_headers[2]} "Some uncaught error slipped through"
+        exit 1
+#         git revert --no-commit HEAD~1
+#         git commit -m "AUTO: Reverting to previous commit"; return_code=$?
+#         if [ $return_code -eq 0 ]; then
+#           git push; return_code=$?
+#           if [ $return_code -eq 0 ]; then
+#             post_msg ${msg_headers[1]} "Sucessfully reverted, restarting bot"
+#             return_code=1
+#           else
+#             post_msg ${msg_headers[2]} "Unable to push reversion, hep"
+#             exit 1
+#           fi
+#         else
+#           post_msg ${msg_headers[2]} "Unable to revert or commit change, hep"
+#           exit 1
+#         fi
 
       # RC=2 , clean exit and update
       elif [ $pylon_exit -eq 2 ]; then
@@ -75,7 +77,7 @@ while sleep 1; do
 
         if [ $return_code -eq 0 ]; then
           post_msg ${msg_headers[1]} "Pull successful, restarting bot with new code"
-          bot_status=""
+          bot_status="`git log --name-status HEAD^..HEAD`"
         else
           post_msg ${msg_headers[2]} "Pull unsuccessful, restarting bot with old code"
           bot_status="`git log --name-status HEAD^..HEAD`"
