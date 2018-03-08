@@ -61,7 +61,7 @@ def partC():
             'a deadly laser',
             'starting to gain traction',
             'addicted to smartphones',
-            "not able to afford a house by now if it weren't for all that avacado toast",
+            "not able to afford a house because of all that avacado toast",
             'a kind and merciful DM',
             'saying Ring-ding-ding-ding-dingeringeding',
             'a show you did not know was on Netflix'

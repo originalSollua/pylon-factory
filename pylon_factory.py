@@ -176,14 +176,14 @@ if __name__ == "__main__":
                 temp = pylonGPIO.readCoreTemp()
                 if int(temp) >= 48000:
                     send_message('*WARNING THERMAL OVERLOAD IN PROGRESS!*', 'general')
-                    send_message('*CORE TEMPERATURE IS: '+temp+'*', 'general')
+                    send_message('CORE TEMPERATURE IS: '+temp, 'general')
                     if not pylonGPIO.fanOn:
                         pylonGPIO.activateFan()
                 elif int(temp) < 45000 and pylonGPIO.fanOn:
                     send_message('Thermal crisis averted.', 'general')
                     pylonGPIO.deactivateFan()
                 else:
-                    print 'nothing to report'
+                    LOG_STREAM.append('nothing to report')
 
             if r >= 100:
                 chance = roll("roll 1d99")
