@@ -9,8 +9,7 @@ from socket import error as socket_error
 from slackclient import SlackClient
 import websocket
 import genFact
-
-global on_pi
+on_pi = False
 try:
     import pylonGPIO
     on_pi = True
@@ -165,6 +164,7 @@ if __name__ == "__main__":
     LOG_STREAM.append("in the main probably")
     t = 0
     r = 0
+    global on_pi
     connect()
 
     if slack_client.rtm_connect(with_team_state=False):
