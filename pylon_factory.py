@@ -180,9 +180,9 @@ if __name__ == "__main__":
             except websocket.WebSocketConnectionClosedException:
                 LOG_STREAM.append("network failure")
                 connect()
-            except AttributeError:
-                # LOG_STREAM.append("Attempted to read from a null connection")
-                connect()
+            #except AttributeError:
+            #    LOG_STREAM.append("Attempted to read from a null connection")
+            #    connect()
 
             if command:
                 handle_command(command, channel)
