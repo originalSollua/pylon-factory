@@ -9,13 +9,12 @@ from socket import error as socket_error
 from slackclient import SlackClient
 import websocket
 import genFact
-on_pi = False
+on_pi = True
 try:
     import pylonGPIO
-    on_pi = True
-    print("On the Pi")
-except ImportError:
+except ImportError as inputError:
     on_pi = False
+    print(inputError)
 
 #activate a slackbot instance
 #slackbot userid
@@ -72,9 +71,6 @@ def whatLoveIs():
 
 def connect():
     LOG_STREAM.append("attempting connect")
-    with open('.env','r') as env_file:
-        bot_token = env_file.readline().rstrip().split("=")[1]
-    LOG_STREAM.append(bot_token)
     global slack_client
     slack_client = SlackClient(bot_token)
 
@@ -165,6 +161,10 @@ if __name__ == "__main__":
     LOG_STREAM.append("in the main probably")
     t = 0
     r = 0
+    global bot_token
+    with open('.env','r') as env_file:
+        bot_token = env_file.readline().rstrip().split("=")[1]
+    LOG_STREAM.append(bot_token)
     connect()
 
     if slack_client.rtm_connect(with_team_state=False):
