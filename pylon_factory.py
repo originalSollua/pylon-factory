@@ -191,7 +191,11 @@ if __name__ == "__main__":
                 t = t+1
                 r = r+1
             if t >= 10:
-                slack_client.server.ping()
+                try:
+                    slack_client.server.ping()
+                except slackclient.server.SlackConnectionError:
+                    LOG_STREAM.append("Why would ping fail?")
+                    connect()
                 t = 0
                 if on_pi:
                     temp = pylonGPIO.readCoreTemp()
