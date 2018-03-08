@@ -29,6 +29,7 @@ RETURN_CODE = 0
 CON_T = 0
 DIE_RANGE = range(1,100)
 DEFAULT_RESPONSE = "You are a goober."
+SHRUG_MAN = "¯\_(ツ)_/¯"
 LOG_FN = "log.txt"
 LOG_STREAM =[]
 if on_pi:
@@ -84,6 +85,9 @@ def writeLog():
                 logfile.write(str(datetime.datetime.now()) +": "+x)
             except TypeError:
                 logfile.write(str(datetime.datetime.now()) +": LOG ERR")
+            except UnicodeEncodeError:
+                logfile.write(str(datetime.datetime.now()) +": "+\
+                              str(x.encode("utf-8","replace")))
             logfile.write("\n")
     logfile.close()
     del LOG_STREAM[:]
@@ -93,19 +97,22 @@ def writeLog():
 def parse_bot_commands(slack_events):
     for event in slack_events:
         if event["type"] == "message" and not "subtype" in event:
-            user_id, message = parse_dm(event["text"])
+            user_id, message = parse_dm(event["text"], event["channel"])
             if user_id == botid:
                 LOG_STREAM.append(message)
                 return message, event["channel"]
     return None, None
 
-def parse_dm(message_text):
+def parse_dm(message_text, channel):
     LOG_STREAM.append(message_text)
     global CON_T
     CON_T = CON_T+1
     if CON_T >= 10:
         chime_in();
         CON_T = 0
+    if SHRUG_MAN in message_text:
+        send_message(SHRUG_MAN, channel)
+
 
     matches = re.search(MENTION_REGEX, message_text)
     return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
