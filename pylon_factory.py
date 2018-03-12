@@ -9,6 +9,7 @@ from socket import error as socket_error
 from slackclient import SlackClient
 import websocket
 import genFact
+ 
 on_pi = True
 try:
     import pylonGPIO
@@ -137,6 +138,10 @@ def handle_command(command, channel):
     elif command.startswith("factoid"):
             response = iWannaKnow()
             send_message(response, channel);
+
+   elif command.startswith("env status"):
+        response = pylonGPIO.getExternalTemp()
+        send_message(response, channel);
 
     elif command.startswith("update"):
         global CONTINUE_RUNNING

@@ -1,17 +1,19 @@
 import time
 import subprocess
 import RPi.GPIO as gpio
+import Adafruit_ADS1x15
 #from tsl2561 import TSL2561
 
 pinFan = 0
 fanOn = False
+GAIN = 1
+adc = Adafruit_ADS1x15.ADS1115()
 
 def initPylonIO():
     global pinFan
     gpio.setmode(gpio.BCM)
     gpio.setwarnings(False)
     pinFan = 21
-
     gpio.setup(pinFan, gpio.OUT, initial=gpio.LOW)
 
 def readCoreTemp():
@@ -30,3 +32,7 @@ def deactivateFan():
     gpio.output(pinFan, gpio.LOW)
     fanOn = False
 
+def getExternalTemp():
+    value = adc.read_adc(0, gain=GAIN)
+    tempc = ((value*3.3)/1024.0)-0.5
+    return tempc
