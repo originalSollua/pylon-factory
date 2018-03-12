@@ -143,7 +143,7 @@ def handle_command(command, channel):
         response = pylonGPIO.getExternalTemp()
         send_message(response, channel);
 
-    elif command.startswith("update"):
+   elif command.startswith("update"):
         global CONTINUE_RUNNING
         global RETURN_CODE
         #added stuff here
