@@ -136,8 +136,8 @@ def handle_command(command, channel):
         send_message(response, channel)
 
     elif command.startswith("factoid"):
-            response = iWannaKnow()
-            send_message(response, channel);
+        response = iWannaKnow()
+        send_message(response, channel);
 
    elif command.startswith("env status"):
         response = pylonGPIO.getExternalTemp()
