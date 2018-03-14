@@ -186,7 +186,8 @@ if __name__ == "__main__":
             except websocket.WebSocketConnectionClosedException:
                 LOG_STREAM.append("network failure")
                 connect()
-            #except AttributeError:
+            except AttributeError:
+                pass
             #    LOG_STREAM.append("Attempted to read from a null connection")
             #    connect()
 
@@ -198,7 +199,7 @@ if __name__ == "__main__":
                 r = r+1
             if t >= 10:
                 #try:
-                #    slack_client.server.ping()
+                slack_client.server.ping()
                 #except slackclient.server.SlackConnectionError:
                 #    LOG_STREAM.append("Why would ping fail?")
                 #    connect()
