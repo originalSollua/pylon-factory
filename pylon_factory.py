@@ -187,8 +187,8 @@ if __name__ == "__main__":
                 LOG_STREAM.append("network failure")
                 connect()
             except AttributeError:
+                LOG_STREAM.append("Numpy again")
                 pass
-            #    LOG_STREAM.append("Attempted to read from a null connection")
             #    connect()
 
             if command:
@@ -198,11 +198,10 @@ if __name__ == "__main__":
                 t = t+1
                 r = r+1
             if t >= 10:
-                #try:
-                slack_client.server.ping()
-                #except slackclient.server.SlackConnectionError:
-                #    LOG_STREAM.append("Why would ping fail?")
-                #    connect()
+                try:
+                    slack_client.server.ping()
+                except:
+                    LOG_STREAM.append("Why would ping fail?")
                 t = 0
                 if on_pi:
                     temp = pylonGPIO.readCoreTemp()
