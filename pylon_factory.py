@@ -102,6 +102,7 @@ def parse_bot_commands(slack_events):
 
 def parse_dm(message_text, channel):
     LOG_STREAM.append(message_text)
+    pylonGPIO.lcdLog(message_text)
     global CON_T
     CON_T = CON_T+1
     if CON_T >= 10:
@@ -197,6 +198,7 @@ if __name__ == "__main__":
             else:
                 t = t+1
                 r = r+1
+                pylonGPIO.lcdTick()
             if t >= 10:
                 try:
                     slack_client.server.ping()

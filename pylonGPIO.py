@@ -9,7 +9,9 @@ pinFan = 0
 fanOn = False
 GAIN = 1
 adc = Adafruit_ADS1x15.ADS1115()
- 
+j = [0, 0, 0, 0]
+i = 0
+lcd = None
 lcd_rs = 25
 lcd_en = 24
 lcd_d4 = 23
@@ -19,9 +21,11 @@ lcd_d7 = 22
 pin_LED = 4
 lcd_rows = 4
 lcd_cols = 20
+lcd_list = [' ', ' ', ' ', ' ']
 
 def initPylonIO():
     global pinFan
+    global lcd
     gpio.setmode(gpio.BCM)
     gpio.setwarnings(False)
     pinFan = 21
@@ -33,6 +37,24 @@ def readCoreTemp():
     result = subprocess.check_output(['cat','/sys/class/thermal/thermal_zone0/temp'])
     return result
 
+def lcdLog(msg):
+    global lcd_list
+
+    lcd_list.append(msg)
+    del lcd_list[0]
+
+def lcdTick():
+    global lcd
+    global lcd_list
+    global j
+    global i
+    longArr = [False, False, False, False]
+    message = ""
+    for m in lcd_list:
+        message = message+(m.ljust(19))
+    lcd.message(message)
+
+    
 def activateFan():
     global pinFan
     global fanOn
