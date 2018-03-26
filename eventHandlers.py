@@ -11,12 +11,14 @@ def handle_command(command, channel, logger, sc):
         return True, 0
 
     elif command.startswith("roll"):
-        response = commandHandlers.roll(command, logger)
+        logger.buffer(command)
+        response = commandHandlers.roll(command)
         util.send_message(response, channel,sc)
         return True, 0
 
     elif command.startswith("factoid"):
-        response = commandHandlers.iWannaKnow(logger)
+        response = commandHandlers.iWannaKnow()
+        logger.buffer(response)
         util.send_message(response, channel,sc)
         return True, 0
 

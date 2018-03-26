@@ -3,11 +3,11 @@ import genFact
 
 DIE_RANGE = range(1,100)
 
-def roll(message_text, logger):
+# Future roll handler
+def roll(message_text):
     num_dice = 0
     dice_size = 0
     dice_array = []
-    logger.buffer(message_text)
     roll_com = message_text.split(" ")
     if roll_com[0] != "roll":
         return "I dont even know what happened"
@@ -30,8 +30,6 @@ def roll(message_text, logger):
     else:
         return "Invalid roll parameters. Please use (1-99)d(1-99)"
 
-def iWannaKnow(logger):
-    tfact = genFact.get()
-    logger.buffer(tfact)
-    return tfact
-
+# Future factoid handler
+def iWannaKnow():
+    return genFact.get()

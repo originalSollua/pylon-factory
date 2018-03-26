@@ -3,6 +3,8 @@ import datetime
 DEFAULT_RESPONSE = "You are a goober."
 DEFAULT_FN = "log.txt"
 
+# Logger class
+# Handles buffering logs messages and writing them to the file
 class Logger:
 
     def __init__(self, fn = DEFAULT_FN):
