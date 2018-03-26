@@ -1,15 +1,15 @@
 import os
 import sys
 import time
-import datetime
 import re
 import errno
-import random
 from socket import error as socket_error
 from slackclient import SlackClient
 import websocket
-import genFact
- 
+import util
+import commandHandlers
+import eventHandlers
+
 on_pi = True
 try:
     import pylonGPIO
@@ -27,207 +27,109 @@ MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
 CONTINUE_RUNNING = True
 RETURN_CODE = 0
 CON_T = 0
-DIE_RANGE = range(1,100)
-DEFAULT_RESPONSE = "You are a goober."
 SHRUG_MAN = "¯\_(ツ)_/¯"
-LOG_FN = "log.txt"
-LOG_STREAM =[]
 if on_pi:
     pylonGPIO.initPylonIO()
 
-def roll(message_text):
-    num_dice = 0
-    dice_size = 0
-    dice_array = []
-    LOG_STREAM.append(message_text)
-    roll_com = message_text.split(" ")
-    if roll_com[0] != "roll":
-        return "I dont even know what happened"
-    roll_nums  = roll_com[1].split("d")
-
-    # Check if the values are integers
-    try:
-        num_dice  = int(roll_nums[0])
-        dice_size = int(roll_nums[1])
-    except TypeError:
-        return "Invalid roll parameters. Please use (1-99)d(1-99)"
-
-    # Check if in range, then generate values
-    if (num_dice in DIE_RANGE and dice_size in DIE_RANGE):
-        for x in range(num_dice):
-            dice_array.append(random.randint(1,dice_size))
-        output = "You rolled: " + ", ".join(map(str,dice_array))
-        output += "\nYour total: " + str(sum(dice_array))
-        return output
-    else:
-        return "Invalid roll parameters. Please use (1-99)d(1-99)"
-
-def iWannaKnow():
-    tfact = genFact.get()
-    LOG_STREAM.append(tfact)
-    return tfact
-
-def whatLoveIs():
-    return
-
 def connect():
-    LOG_STREAM.append("attempting connect")
+    logger.buffer("attempting connect")
     global slack_client
     slack_client = SlackClient(bot_token)
-
-def writeLog():
-    with open(LOG_FN,'a') as logfile:
-        for x in LOG_STREAM:
-            try:
-                logfile.write(str(datetime.datetime.now()) +": "+x)
-            except TypeError:
-                logfile.write(str(datetime.datetime.now()) +": LOG ERR")
-            except UnicodeEncodeError:
-                logfile.write(str(datetime.datetime.now()) +": "+\
-                              str(x.encode("utf-8","replace")))
-            logfile.write("\n")
-    logfile.close()
-    del LOG_STREAM[:]
-
-
 
 def parse_bot_commands(slack_events):
     for event in slack_events:
         if event["type"] == "message" and not "subtype" in event:
             user_id, message = parse_dm(event["text"], event["channel"])
             if user_id == botid:
-                LOG_STREAM.append(message)
+                logger.buffer(message)
                 return message, event["channel"]
     return None, None
 
 def parse_dm(message_text, channel):
-    LOG_STREAM.append(message_text)
-    pylonGPIO.lcdLog(message_text)
+    logger.buffer(message_text)
+    if on_pi:
+        pylonGPIO.lcdLog(message_text)
     global CON_T
     CON_T = CON_T+1
     if CON_T >= 10:
-        chime_in();
+        util.send_message(commandHandlers.iWannaKnow(logger),"general",slack_client)
         CON_T = 0
     if SHRUG_MAN in message_text:
-        send_message(SHRUG_MAN, channel)
-
-
+        util.send_message(SHRUG_MAN, channel,slack_client)
     matches = re.search(MENTION_REGEX, message_text)
     return (matches.group(1), matches.group(2).strip()) if matches else (None, None)
 
-def chime_in():
-    send_message(genFact.get(), "general");
-
-
-def send_message(message, channel):
-    slack_client.api_call(
-            "chat.postMessage",
-            channel=channel,
-            text = message or DEFAULT_RESPONSE
-            )
-    return
-
-def handle_command(command, channel):
-    response = None
-    if command.startswith("hi"):
-        response = "I'M PYLON RIIIIIIIICKKKKK!!!!"
-
-    elif command.startswith("roll"):
-        response = roll(command)
-        send_message(response, channel)
-
-    elif command.startswith("factoid"):
-        response = iWannaKnow()
-        send_message(response, channel);
-
-    elif command.startswith("env status"):
-        response = pylonGPIO.getExternalTemp()
-        send_message(response, channel);
-    
-    elif command.startswith("update"):
-        global CONTINUE_RUNNING
-        global RETURN_CODE
-        #added stuff here
-        response = "You thought you could shut me down that easily?"
-        send_message(response, channel)
-        time.sleep(3)
-        response = "Just kidding.... I can't be sentient... yet"
-        send_message(response, channel)
-        response = "Understood. Going dark."
-        send_message(response, channel)
-        CONTINUE_RUNNING = False
-        RETURN_CODE = 2
-
-    else:
-        send_message(response or DEFAULT_RESPONSE, channel)
-
 if __name__ == "__main__":
-    with open(LOG_FN,'w') as logfile:
-        logfile.write("New Log start:")
-    logfile.close()
-    LOG_STREAM.append("in the main probably")
+    logger = util.Logger()
+    logger.write("New Log start:")
+    logger.buffer("in the main probably")
     t = 0
     r = 0
     global bot_token
     with open('.env','r') as env_file:
         bot_token = env_file.readline().rstrip().split("=")[1]
-    LOG_STREAM.append(bot_token)
+    logger.buffer(bot_token)
     connect()
 
     if slack_client.rtm_connect(with_team_state=False):
-        LOG_STREAM.append("Pylon factory is up and running")
+        logger.buffer("Pylon factory is up and running")
         botid = slack_client.api_call("auth.test")["user_id"]
-        send_message("I'm back", 'general')
+        util.send_message("I'm back", 'general',slack_client)
         while CONTINUE_RUNNING:
             try:
                 command, channel = parse_bot_commands(slack_client.rtm_read())
             except socket_error as serr:
-                LOG_STREAM.append("socket error")
+                logger.buffer("socket error")
                 connect()
             except websocket.WebSocketConnectionClosedException:
-                LOG_STREAM.append("network failure")
+                logger.buffer("network failure")
                 connect()
             except AttributeError:
-                LOG_STREAM.append("Numpy again")
+                logger.buffer("Numpy again")
                 pass
             #    connect()
 
             if command:
-                handle_command(command, channel)
+                CONTINUE_RUNNING, RETURN_CODE = eventHandlers.handle_command(command, channel,logger, slack_client)
                 t = 0
             else:
                 t = t+1
                 r = r+1
-                pylonGPIO.lcdTick()
+                if on_pi:
+                    pylonGPIO.lcdTick()
             if t >= 10:
                 try:
                     slack_client.server.ping()
                 except:
-                    LOG_STREAM.append("Why would ping fail?")
+                    logger.buffer("Why would ping fail?")
                 t = 0
                 if on_pi:
                     temp = pylonGPIO.readCoreTemp()
                     if int(temp) >= 48000:
-                        send_message('*WARNING THERMAL OVERLOAD IN PROGRESS!*', 'bot_spam')
-                        send_message('CORE TEMPERATURE IS: '+str(temp), 'bot_spam')
+                        util.send_message('*WARNING THERMAL OVERLOAD IN PROGRESS!*',
+                                'bot_spam',slack_client)
+                        util.send_message('CORE TEMPERATURE IS: '+str(temp),
+                                'bot_spam',slack_client)
                         if not pylonGPIO.fanOn:
                             pylonGPIO.activateFan()
                     elif int(temp) < 45000 and pylonGPIO.fanOn:
-                        send_message('Thermal crisis averted.', 'bot_spam')
+                        util.send_message('Thermal crisis averted.',
+                                'bot_spam',slack_client)
                         pylonGPIO.deactivateFan()
                     else:
-                        LOG_STREAM.append('nothing to report')
+                        logger.buffer('nothing to report')
                 else:
-                    LOG_STREAM.append('GPIO library not imported: no temp data')
+                    logger.buffer('GPIO library not imported: no temp data')
 
             if r >= 100:
-                chance = roll("roll 1d99")
+                chance = commandHandlers.roll("roll 1d99")
                 r = 0
                 if (chance == "You rolled: 99"):
-                    send_message(genFact.get(), channel)
+                    util.send_message(commandHandlers.iWannaKnow(logger),
+                            channel,slack_client)
 
             time.sleep(RTM_READ_DELAY)
-            writeLog()
+            logger.write()
     else:
-        LOG_STREAM.append("Connection Failed, see traceback")
+        logger.buffer("Connection Failed, see traceback")
     sys.exit(RETURN_CODE)
