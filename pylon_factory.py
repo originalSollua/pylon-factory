@@ -20,7 +20,7 @@ class PylonFactory:
         if GPIO_on:
             pylonGPIO.initPylonIO()
         else:
-            logger.buffer('GPIO library not imported: no temp data')
+            self.logger.buffer('GPIO library not imported: no temp data')
         util.send_message("I'm back", 'general', self.slack_client)
 
     def process(self, event_list, t_tick, r_tick):
@@ -39,7 +39,7 @@ class PylonFactory:
             try:
                 self.slack_client.server.ping()
             except:
-                logger.buffer("Why would ping fail?")
+                self.logger.buffer("Why would ping fail?")
             if GPIO_on:
                 temp = pylonGPIO.readCoreTemp()
                 if int(temp) >= 48000:
@@ -54,7 +54,7 @@ class PylonFactory:
                             'bot_spam', self.slack_client)
                     pylonGPIO.deactivateFan()
                 else:
-                    logger.buffer('nothing to report')
+                    self.logger.buffer('nothing to report')
         if r_tick >= 100:
             return_code += 10
             chance = commandHandlers.roll("roll 1d99")
