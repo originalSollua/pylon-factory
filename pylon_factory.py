@@ -90,7 +90,7 @@ class PylonFactory:
         self.con_t = self.con_t+1
         if self.con_t >= 10:
             util.send_message(commandHandlers.iWannaKnow(),"general",self.slack_client)
-            con_t = 0
+            self.con_t = 0
         if util.SHRUG_MAN in message_text:
             util.send_message(util.SHRUG_MAN, channel,self.slack_client)
         matches = re.search(util.MENTION_REGEX, message_text)
