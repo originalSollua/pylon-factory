@@ -35,10 +35,8 @@ class Logger:
 
 
 def send_message(message, channel, sc):
-    sc.api_call(
-            "chat.postMessage",
-            channel=channel,
-            text = message or DEFAULT_RESPONSE
-            )
+    sc.rtm_send_message(channel,
+                        message or DEFAULT_RESPONSE
+                        )
     return
 
