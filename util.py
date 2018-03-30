@@ -1,5 +1,8 @@
 import datetime
 
+SHRUG_MAN = "¯\_(ツ)_/¯"
+MENTION_REGEX = "^<@(|[WU].+?)>(.*)"
+
 DEFAULT_RESPONSE = "You are a goober."
 DEFAULT_FN = "log.txt"
 
