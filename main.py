@@ -26,14 +26,14 @@ def main():
             event_list = slack_client.rtm_read()
         except socket_error as serr:
             logger.buffer("socket error")
-            connect()
+            connect(bot_token)
         except websocket.WebSocketConnectionClosedException:
             logger.buffer("network failure")
-            connect()
+            connect(bot_token)
         except AttributeError:
             logger.buffer("Numpy again")
             pass
-        #    connect()
+        #    connect(bot_token)
 
         # Made the tick count always increase like a real one
         # Can be changed if need be
@@ -70,6 +70,7 @@ def checkValue(val):
         return 0
 
 def botSetup():
+    global bot_token
     with open('.env','r') as env_file:
         bot_token = env_file.readline().rstrip().split("=")[1]
     logger.buffer(bot_token)
